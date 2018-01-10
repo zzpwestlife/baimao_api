@@ -41,9 +41,9 @@ class ShuoshuoController extends Controller
             $where['id'] = ['id', '<', $lastId];
         }
 
-        $chats = $this->chatRepository->whereWithParams($where)
+        $chats = $this->chatRepository->whereWithParams($where)->with('user')
             ->withCount(['shuoshuocomments', 'shuoshuoupvotes'])
-            ->orderBy('id', 'desc')->paginate();
+            ->orderBy('id', 'desc')->paginate(20, ['id', 'content', 'user_id']);
 
         if (count($chats) == 0) {
             $this->markSuccess('没有更多');
