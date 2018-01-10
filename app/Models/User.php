@@ -48,7 +48,7 @@ class User extends Authenticatable
 
     public function getFullAvatarUrlAttribute()
     {
-        return (!empty($this->avatar_url)) ? DATA_URL . $this->avatar_url : '';
+        return (!empty($this->avatar_url)) ? DATA_URL . $this->avatar_url : '/images/avatar/1.jpg';
     }
 
 
