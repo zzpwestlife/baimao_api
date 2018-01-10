@@ -4,19 +4,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | PDO Fetch Style
-    |--------------------------------------------------------------------------
-    |
-    | By default, database results will be returned as instances of the PHP
-    | stdClass object; however, you may desire to retrieve records in an
-    | array format for simplicity. Here you can tweak the fetch style.
-    |
-    */
-
-    'fetch' => PDO::FETCH_CLASS,
-
-    /*
-    |--------------------------------------------------------------------------
     | Default Database Connection Name
     |--------------------------------------------------------------------------
     |
@@ -48,93 +35,49 @@ return [
 
         'sqlite' => [
             'driver' => 'sqlite',
-            'database' => database_path('database.sqlite'),
+            'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
         ],
-
-        // _SLAVE
 
         'mysql' => [
             'driver' => 'mysql',
-            'read' => [
-                ['host' => env('DB_SLAVE_HOST', 'localhost')],
-                ['host' => env('DB_HOST', 'localhost')],
-                ['host' => env('DB_SLAVE_HOST', 'localhost')]
-            ],
-            'write' => [
-                'host' => env('DB_HOST', 'localhost'),
-            ],
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'collation' => 'utf8_general_ci',
-            'port' => env('DB_PORT', 3306),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'wekaoyan'),
+            'username' => env('DB_USERNAME', 'root'),
+            'password' => env('DB_PASSWORD', 'fetwcgxo1'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-        ],
-
-        'seec_user' => [
-            'driver' => 'mysql',
-            'read' => [
-                ['host' => env('SEEC_USER_DB_SLAVE_HOST', 'localhost')],
-                ['host' => env('SEEC_USER_DB_HOST', 'localhost')]
-            ],
-            'write' => [
-                'host' => env('SEEC_USER_DB_HOST', 'localhost'),
-            ],
-            'database' => env('SEEC_USER_DB_DATABASE', 'forge'),
-            'username' => env('SEEC_USER_DB_USERNAME', 'forge'),
-            'password' => env('SEEC_USER_DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'collation' => 'utf8_general_ci',
-            'port' => env('SEEC_USER_DB_PORT', 3306),
-            'prefix' => '',
-            'strict' => false,
-            'engine' => null,
-        ],
-
-        'seec_shop' => [
-            'driver' => 'mysql',
-            'read' => [
-                ['host' => env('SEEC_SHOP_DB_HOST', 'localhost')],
-                ['host' => env('SEEC_SHOP_DB_SLAVE_HOST', 'localhost')]
-            ],
-            'write' => [
-                'host' => env('SEEC_SHOP_DB_HOST', 'localhost'),
-            ],
-
-            'database' => env('SEEC_SHOP_DB_DATABASE', 'forge'),
-            'username' => env('SEEC_SHOP_DB_USERNAME', 'forge'),
-            'password' => env('SEEC_SHOP_DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'collation' => 'utf8_general_ci',
-            'port' => env('SEEC_SHOP_DB_PORT', 3306),
-            'prefix' => '',
-            'strict' => false,
+            'strict' => true,
             'engine' => null,
         ],
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'host' => env('DB_HOST', 'localhost'),
+            'host' => env('DB_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'forge'),
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
             'prefix' => '',
             'schema' => 'public',
+            'sslmode' => 'prefer',
         ],
-
-        'sqlsrv' => [
-            'driver' => 'sqlsrv',
+        'mongodb' => [
+            'driver' => 'mongodb',
             'host' => env('DB_HOST', 'localhost'),
-            'database' => env('DB_DATABASE', 'forge'),
-            'username' => env('DB_USERNAME', 'forge'),
-            'password' => env('DB_PASSWORD', ''),
-            'charset' => 'utf8',
-            'prefix' => '',
+            'port' => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE'),
+            'username' => env('DB_USERNAME'),
+            'password' => env('DB_PASSWORD'),
+            'use_mongo_id' => false,
+            'options' => [
+                'db' => 'admin', // Sets the authentication database required by mongo 3
+                //['replicaSet' => 'replicaSetName'], // Connect to multiple servers or replica sets
+            ]
         ],
 
     ],
@@ -165,26 +108,12 @@ return [
 
     'redis' => [
 
-        'cluster' => false,
+        'client' => 'predis',
 
         'default' => [
-            'host' => env('REDIS_HOST', 'localhost'),
+            'host' => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD', null),
             'port' => env('REDIS_PORT', 6379),
-            'database' => 0,
-        ],
-
-        'message' => [
-            'host' => env('REDIS_MESSAGE_HOST', 'localhost'),
-            'password' => env('REDIS_MESSAGE_PASSWORD', null),
-            'port' => env('REDIS_MESSAGE_PORT', 6379),
-            'database' => 0,
-        ],
-
-        'ad' => [
-            'host' => env('REDIS_AD_HOST', 'localhost'),
-            'password' => env('REDIS_AD_PASSWORD', null),
-            'port' => env('REDIS_AD_PORT', 6379),
             'database' => 0,
         ],
 

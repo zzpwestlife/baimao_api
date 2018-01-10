@@ -13,6 +13,6 @@ class HomeController extends Controller
 {
     public function getIndex()
     {
-        dd('home');
+        dd('白猫 API home');
     }
 }

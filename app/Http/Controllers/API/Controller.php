@@ -21,14 +21,14 @@ class Controller extends BaseController
             'msg' => '操作失败',
             'data' => new \stdClass(),
         ];
-        $this->logRequest();
+//        $this->logRequest();
         header(sprintf("Current-Server:%s", env('CURRENT_SERVER')));
     }
 
     /**
      * 标记为 成功
      * @param $message
-     * User: Howard
+     * User: zzp
      * Date: 2016-05-11
      */
     protected function markSuccess($message = '操作成功')
@@ -41,7 +41,7 @@ class Controller extends BaseController
      * 标记为 失败
      * @param $code
      * @param string $message
-     * User: Howard
+     * User: zzp
      * Date: 2016-05-11
      */
     protected function markFailed($code, $message = '')
