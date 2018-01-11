@@ -39,8 +39,8 @@ class ShuoshuoCommentController extends Controller
         if (!empty($chatId)) {
             $where['shuoshuo_id'] = $chatId;
 
-            $comments = $this->shuoshuoCommentRepository->whereWithParams($where)->with('user')
-                ->orderBy('id', 'desc')->all(['id', 'content', 'user_id']);
+            $comments = $this->shuoshuoCommentRepository->whereWithParams($where)->with(['user', 'parent'])
+                ->orderBy('id', 'desc')->all(['id', 'content', 'user_id', 'parent_id']);
 
             $this->returnData['data'] = compact('comments');
             $this->markSuccess('数据获取成功');
