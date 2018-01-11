@@ -52,11 +52,11 @@ class ShuoshuoController extends Controller
             ->withCount(['shuoshuocomments', 'shuoshuoupvotes'])
             ->orderBy('id', 'desc')->paginate(20, ['id', 'content', 'user_id']);
 
+        $this->returnData['data'] = compact('chats', 'currentForum');
         if (count($chats) == 0) {
             $this->markSuccess('没有更多');
             return $this->returnData;
         } else {
-            $this->returnData['data'] = compact('chats', 'currentForum');
             $this->markSuccess('数据获取成功');
         }
 
