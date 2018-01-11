@@ -41,6 +41,8 @@ class ShuoshuoController extends Controller
             $where['id'] = ['id', '<', $lastId];
         }
 
+        $where['user_id'] = ['user_id', '<>', 1111];
+
         $chats = $this->chatRepository->whereWithParams($where)->with('user')
             ->withCount(['shuoshuocomments', 'shuoshuoupvotes'])
             ->orderBy('id', 'desc')->paginate(20, ['id', 'content', 'user_id']);
