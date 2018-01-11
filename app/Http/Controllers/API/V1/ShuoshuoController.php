@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\Controller;
 use App\Repositories\Contracts\ChatRepository;
+use App\Repositories\Contracts\ForumRepository;
 use Illuminate\Http\Request;
 
 /**
@@ -13,11 +14,13 @@ use Illuminate\Http\Request;
 class ShuoshuoController extends Controller
 {
     protected $chatRepository;
+    protected $forumRepository;
 
-    public function __construct(ChatRepository $chatRepository)
+    public function __construct(ChatRepository $chatRepository, ForumRepository $forumRepository)
     {
         parent::__construct();
         $this->chatRepository = $chatRepository;
+        $this->forumRepository = $forumRepository;
     }
 
     /**
@@ -33,8 +36,10 @@ class ShuoshuoController extends Controller
         $lastId = trim($request->input('last_id', 0));
 
         $where = [];
+        $currentForum = new \stdClass();
         if (!empty($forumId)) {
             $where['forum_id'] = $forumId;
+            $currentForum = $this->forumRepository->whereWithParams(['id' => $forumId])->first();
         }
 
         if (!empty($lastId)) {
@@ -51,7 +56,7 @@ class ShuoshuoController extends Controller
             $this->markSuccess('没有更多');
             return $this->returnData;
         } else {
-            $this->returnData['data'] = $chats;
+            $this->returnData['data'] = compact('chats', 'currentForum');
             $this->markSuccess('数据获取成功');
         }
 
