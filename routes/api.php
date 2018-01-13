@@ -30,6 +30,7 @@ $api->version(['v1', 'v2', 'v3'], function ($api) use ($v1, $v2, $v3) {
     $api->get("/", $prefix . 'HomeController@getIndex');
     $api->get("/forums", $prefix . 'ForumController@getIndex');
     $api->get("/shuoshuos", $prefix . 'ShuoshuoController@getIndex');
+    $api->post("/shuoshuos/add", $prefix . 'ShuoshuoController@postAdd');
     $api->get("/shuoshuo_comments", $prefix . 'ShuoshuoCommentController@getIndex');
     $api->get("/questions", $prefix . 'QuestionController@getIndex');
 });

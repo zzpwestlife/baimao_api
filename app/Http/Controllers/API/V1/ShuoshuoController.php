@@ -62,4 +62,49 @@ class ShuoshuoController extends Controller
 
         return $this->returnData;
     }
+
+    /**
+     * @comment 发表一条
+     * @param Request $request
+     * @return array
+     * @author zzp
+     * @date 2018-01-13
+     */
+    public function postAdd(Request $request)
+    {
+        $forumId = intval($request->input('forum_id', 0));
+        $userId = intval($request->input('user_id', 0));
+        $content = trim($request->input('content', ''));
+
+
+        $flag = true;
+        if (empty($userId)) {
+            $this->markFailed('9401', 'user_id 必填');
+            $flag = false;
+        } elseif (empty($forumId)) {
+            $this->markFailed('9402', 'forum_id 必填');
+            $flag = false;
+        } elseif (empty($content)) {
+            $this->markFailed('9403', 'content 必填');
+            $flag = false;
+        }
+
+        if ($flag) {
+            $createData = [
+                'user_id' => $userId,
+                'forum_id' => $forumId,
+                'content' => $content
+            ];
+            $object = $this->chatRepository->create($createData);
+            if (count($object) == 0) {
+                $this->markSuccess('没有更多收藏');
+                return $this->returnData;
+            } else {
+                $this->returnData['data'] = $object;
+                $this->markSuccess('数据获取成功');
+            }
+        }
+
+        return $this->returnData;
+    }
 }

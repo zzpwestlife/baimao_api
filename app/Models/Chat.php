@@ -12,6 +12,8 @@ class Chat extends BaseModel implements Transformable
 
     protected $table = "shuoshuos";
 
+    protected $fillable = ['user_id', 'forum_id', 'content'];
+
 
     public function user()
     {
