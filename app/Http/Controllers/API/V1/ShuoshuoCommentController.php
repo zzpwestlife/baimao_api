@@ -42,7 +42,7 @@ class ShuoshuoCommentController extends Controller
 
         $where = [];
         if (!empty($chatId)) {
-            $chat = $this->chatRepository->whereWithParams(['id' => $chatId])->first();
+            $chat = $this->chatRepository->whereWithParams(['id' => $chatId])->with('user')->first();
             $where['shuoshuo_id'] = $chatId;
 
             $comments = $this->shuoshuoCommentRepository->whereWithParams($where)->with(['user', 'parent'])
