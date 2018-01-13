@@ -34,6 +34,7 @@ class ShuoshuoController extends Controller
     {
         $forumId = intval($request->input('forum_id', 0));
         $lastId = trim($request->input('last_id', 0));
+        $pageSize = intval($request->input('page_size', 20));
 
         $where = [];
         $currentForum = new \stdClass();
@@ -50,7 +51,7 @@ class ShuoshuoController extends Controller
 
         $chats = $this->chatRepository->whereWithParams($where)->with('user')
             ->withCount(['shuoshuocomments', 'shuoshuoupvotes'])
-            ->orderBy('id', 'desc')->paginate(20, ['id', 'content', 'user_id']);
+            ->orderBy('id', 'desc')->paginate($pageSize, ['id', 'content', 'user_id']);
 
         $this->returnData['data'] = compact('chats', 'currentForum');
         if (count($chats) == 0) {
