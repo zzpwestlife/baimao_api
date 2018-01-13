@@ -16,12 +16,17 @@ class ShuoshuoCommentController extends Controller
 {
     protected $shuoshuoCommentRepository;
     protected $forumRepository;
+    protected $chatRepository;
 
-    public function __construct(ShuoshuoCommentRepository $shuoshuoCommentRepository, ForumRepository $forumRepository)
-    {
+    public function __construct(
+        ShuoshuoCommentRepository $shuoshuoCommentRepository,
+        ForumRepository $forumRepository,
+        ChatRepository $chatRepository
+    ) {
         parent::__construct();
         $this->shuoshuoCommentRepository = $shuoshuoCommentRepository;
         $this->forumRepository = $forumRepository;
+        $this->chatRepository = $chatRepository;
     }
 
     /**
@@ -37,12 +42,13 @@ class ShuoshuoCommentController extends Controller
 
         $where = [];
         if (!empty($chatId)) {
+            $chat = $this->chatRepository->whereWithParams(['id' => $chatId])->first();
             $where['shuoshuo_id'] = $chatId;
 
             $comments = $this->shuoshuoCommentRepository->whereWithParams($where)->with(['user', 'parent'])
                 ->orderBy('id', 'desc')->all(['id', 'content', 'user_id', 'parent_id', 'updated_at']);
 
-            $this->returnData['data'] = compact('comments');
+            $this->returnData['data'] = compact('comments', 'chat');
             $this->markSuccess('数据获取成功');
         } else {
             $this->markFailed('1001', 'chat_id 不能为空');
