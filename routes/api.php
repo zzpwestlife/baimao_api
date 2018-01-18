@@ -33,6 +33,10 @@ $api->version(['v1', 'v2', 'v3'], function ($api) use ($v1, $v2, $v3) {
     $api->post("/shuoshuos/add", $prefix . 'ShuoshuoController@postAdd');
     $api->get("/shuoshuo_comments", $prefix . 'ShuoshuoCommentController@getIndex');
     $api->get("/questions", $prefix . 'QuestionController@getIndex');
+
+    $api->get("/verify_code", $prefix . 'UserController@getVerifyCode');
+    $api->post("/register", $prefix . 'UserController@postRegister');
+    $api->post("/login", $prefix . 'UserController@postLogin');
 });
 
 

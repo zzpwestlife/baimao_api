@@ -169,21 +169,9 @@ function getClientIp()
 
 }
 
-function encryptPassword($password)
-{
-    if (empty($password)) {
-        return $password;
-    }
-
-    if (strlen($password) != 32) {
-        $password = md5($password);
-    }
-    return $password;
-}
-
 function saveAvatar($avatar)
 {
-    if (!empty($avatar) && strpos($avatar, 'http://') === 0 || strpos($avatar, 'https://') === 0) {
+    if (!empty($avatar) && (strpos($avatar, 'http://') === 0 || strpos($avatar, 'https://') === 0)) {
         $avatarDis = dirname(APP_ROOT) . config('common.picture_path.user_avatar_path');
         autoMakeDir($avatarDis);
         $curl = new Curl\Curl();
