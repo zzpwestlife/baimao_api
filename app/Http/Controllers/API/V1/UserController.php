@@ -87,13 +87,12 @@ class UserController extends Controller
                     'name' => $name,
                     'password' => $password,
                     'reg_ip' => getClientIp(),
+                    'avatar_url' => sprintf('/images/avatar/%s.jpg', rand(1, 26)),
                     'comment' => $orgPass
                 ];
                 $userInfo = $this->userRepository->create($dataUser);
                 if (!is_empty($userInfo)) {
-                    $this->returnData['data'] = [
-                        'user_id' => $userInfo->id,
-                    ];
+                    $this->returnData['data'] = $userInfo;
                     $this->markSuccess('注册成功');
                 } else {
                     $this->markFailed('9404', '注册失败，请稍后重试');
