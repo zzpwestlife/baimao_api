@@ -47,6 +47,9 @@ class UserController extends Controller
         $verifyCode = trim($request->input('verify_code', ''));
         $flag = true;
         if (empty($phone)) {
+            $this->markFailed('9408', '用户名必填');
+            $flag = false;
+        } elseif (empty($phone)) {
             $this->markFailed('9401', '手机号必填');
             $flag = false;
         } elseif (preg_match('/^\d{11}$/', $phone) == 0) {
@@ -78,24 +81,30 @@ class UserController extends Controller
             if (!is_empty($user)) {
                 $this->markFailed('9403', '手机号已注册，请直接登录');
             } else {
-                $orgPass = $password;
-                if (strlen($password) < 60) {
-                    $password = bcrypt($password);
-                }
-                $dataUser = [
-                    'mobile' => $phone,
-                    'name' => $name,
-                    'password' => $password,
-                    'reg_ip' => getClientIp(),
-                    'avatar_url' => sprintf('/images/avatar/%s.jpg', rand(1, 26)),
-                    'comment' => $orgPass
-                ];
-                $userInfo = $this->userRepository->create($dataUser);
-                if (!is_empty($userInfo)) {
-                    $this->returnData['data'] = $userInfo;
-                    $this->markSuccess('注册成功');
+                // 看用户名是否合法
+                $user = $this->userRepository->whereWithParams(['name' => $name])->first();
+                if (!is_empty($user)) {
+                    $this->markFailed('9411', '用户名被占用');
                 } else {
-                    $this->markFailed('9404', '注册失败，请稍后重试');
+                    $orgPass = $password;
+                    if (strlen($password) < 60) {
+                        $password = bcrypt($password);
+                    }
+                    $dataUser = [
+                        'mobile' => $phone,
+                        'name' => $name,
+                        'password' => $password,
+                        'reg_ip' => getClientIp(),
+                        'avatar_url' => sprintf('/images/avatar/%s.jpg', rand(1, 26)),
+                        'comment' => $orgPass
+                    ];
+                    $userInfo = $this->userRepository->create($dataUser);
+                    if (!is_empty($userInfo)) {
+                        $this->returnData['data'] = $userInfo;
+                        $this->markSuccess('注册成功');
+                    } else {
+                        $this->markFailed('9404', '注册失败，请稍后重试');
+                    }
                 }
             }
         }
