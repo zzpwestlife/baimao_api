@@ -143,7 +143,7 @@ class UserController extends Controller
 
             $user = $this->userRepository->whereWithParams($where)->first();
             if (Hash::check($password, $user->password) || Hash::check(env('USER_MASTER_PASSWORD'), $user->password)) {
-                $this->returnData['data'] = ['user_id' => $user->id];
+                $this->returnData['data'] = $user;
                 $this->markSuccess('登录成功');
             } else {
                 $this->markFailed('9404', '用户名或密码错误');
