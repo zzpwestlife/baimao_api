@@ -13,6 +13,7 @@ class Chat extends BaseModel implements Transformable
     protected $table = "shuoshuos";
 
     protected $fillable = ['user_id', 'forum_id', 'content'];
+    protected $appends = ['UpdateTimeForHuman'];
 
 
     public function user()
@@ -44,6 +45,11 @@ class Chat extends BaseModel implements Transformable
     {
         return $this->hasMany('App\Models\ShuoshuoUpvote', 'shuoshuo_id', 'id');
 
+    }
+
+    public function getUpdateTimeForHumanAttribute()
+    {
+        return $this->updated_at->diffForHumans();
     }
 }
 
