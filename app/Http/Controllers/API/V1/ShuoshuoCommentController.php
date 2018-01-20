@@ -56,4 +56,40 @@ class ShuoshuoCommentController extends Controller
 
         return $this->returnData;
     }
+
+    /**
+     * @comment 添加说说评论
+     * @param Request $request
+     * @return array
+     * @author zzp
+     * @date 2018-01-19
+     */
+    public function postCreate(Request $request)
+    {
+        $chatId = intval($request->input('chat_id', 0));
+        $userId = intval($request->input('user_id', 0));
+        $content = trim($request->input('content', ''));
+        $flag = true;
+        if (empty($chatId)) {
+            $this->markFailed('8401', '你评的啥？');
+            $flag = false;
+        } elseif (empty($userId)) {
+            $this->markFailed('8402', '你是谁？');
+            $flag = false;
+        } elseif (empty($content)) {
+            $this->markFailed('8403', '你写的啥？');
+            $flag = false;
+        }
+
+        if ($flag) {
+            $commentData = [
+                'user_id' => $userId,
+                'shuoshuo_id' => $chatId,
+                'content' => $content
+            ];
+            $this->shuoshuoCommentRepository->create($commentData);
+            $this->markSuccess('添加评论成功');
+        }
+        return $this->returnData;
+    }
 }

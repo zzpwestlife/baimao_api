@@ -32,6 +32,7 @@ $api->version(['v1', 'v2', 'v3'], function ($api) use ($v1, $v2, $v3) {
     $api->get("/shuoshuos", $prefix . 'ShuoshuoController@getIndex');
     $api->post("/shuoshuos/add", $prefix . 'ShuoshuoController@postAdd');
     $api->get("/shuoshuo_comments", $prefix . 'ShuoshuoCommentController@getIndex');
+    $api->post("/shuoshuo_comments/add", $prefix . 'ShuoshuoCommentController@postCreate');
     $api->get("/questions", $prefix . 'QuestionController@getIndex');
 
     $api->get("/verify_code", $prefix . 'UserController@getVerifyCode');
