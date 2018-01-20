@@ -14,6 +14,12 @@ class ShuoshuoComment extends BaseModel
         'content'
     ];
 
+    protected $appends = ['UpdateTimeForHuman'];
+    public function getUpdateTimeForHumanAttribute()
+    {
+        return $this->updated_at->diffForHumans();
+    }
+
     public function user()
     {
         return $this->belongsTo('App\Models\User');
@@ -28,4 +34,5 @@ class ShuoshuoComment extends BaseModel
     {
         return $this->belongsTo('App\Models\Shuoshuo');
     }
+
 }
