@@ -31,6 +31,7 @@ $api->version(['v1', 'v2', 'v3'], function ($api) use ($v1, $v2, $v3) {
     $api->get("/forums", $prefix . 'ForumController@getIndex');
     $api->get("/shuoshuos", $prefix . 'ShuoshuoController@getIndex');
     $api->post("/shuoshuos/add", $prefix . 'ShuoshuoController@postAdd');
+    $api->post("/shuoshuos/like", $prefix . 'ShuoshuoController@postLike');
     $api->get("/shuoshuo_comments", $prefix . 'ShuoshuoCommentController@getIndex');
     $api->post("/shuoshuo_comments/add", $prefix . 'ShuoshuoCommentController@postCreate');
     $api->get("/questions", $prefix . 'QuestionController@getIndex');

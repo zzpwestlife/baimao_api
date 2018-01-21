@@ -70,7 +70,7 @@ class ShuoshuoController extends Controller
             if (!empty($userId)) {
                 $myLikes = $this->chatLikeRepository->whereWithParams([
                     'user_id' => $userId,
-                    'deleted_at' => ['deleted_at', 'whereNull', null]
+//                    'deleted_at' => ['deleted_at', 'whereNull', null]
                 ])->all(['shuoshuo_id']);
                 if (!is_empty($myLikes)) {
                     $myLikes = $myLikes->pluck('shuoshuo_id')->toArray();
@@ -148,6 +148,47 @@ class ShuoshuoController extends Controller
                 $this->returnData['data'] = $object;
                 $this->markSuccess('数据获取成功');
             }
+        }
+
+        return $this->returnData;
+    }
+
+    /**
+     * @comment 点赞
+     * @param Request $request
+     * @return array
+     * @author zzp
+     * @date 2018-01-20
+     */
+    public function postLike(Request $request)
+    {
+        $chatId = intval($request->input('chat_id', 0));
+        $userId = intval($request->input('user_id', 0));
+        $likeStatus = intval($request->input('like_status', 0));
+
+
+        $flag = true;
+        if (empty($userId)) {
+            $this->markFailed('9401', 'user_id 必填');
+            $flag = false;
+        } elseif (empty($chatId)) {
+            $this->markFailed('9402', 'chat_id 必填');
+            $flag = false;
+        }
+
+        if ($flag) {
+            $where = [
+                'user_id' => $userId,
+                'shuoshuo_id' => $chatId
+            ];
+            $status = $this->chatLikeRepository->whereWithParams($where)->first();
+            if (!is_empty($status)) {
+                $this->chatLikeRepository->delete($status->id);
+            } else {
+                $this->chatLikeRepository->create($where);
+            }
+            $this->markSuccess('success');
+            return $this->returnData;
         }
 
         return $this->returnData;
