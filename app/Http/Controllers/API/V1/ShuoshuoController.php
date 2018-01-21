@@ -96,6 +96,8 @@ class ShuoshuoController extends Controller
                 $oneItem->fullAvatarUrl = $chat->user->fullAvatarUrl;
                 $oneItem->forum_id = $chat->forum_id;
                 $oneItem->UpdateTimeForHuman = $chat->UpdateTimeForHuman;
+                $oneItem->shuoshuoupvotes_count = $chat->shuoshuoupvotes_count;
+                $oneItem->shuoshuocomments_count = $chat->shuoshuocomments_count;
 
                 $returnChats[] = $oneItem;
             }
