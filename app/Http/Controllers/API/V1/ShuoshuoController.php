@@ -99,7 +99,7 @@ class ShuoshuoController extends Controller
 
                 $returnChats[] = $oneItem;
             }
-            $this->returnData['data'] = compact('returnChats', 'currentForum');
+            $this->returnData['data'] = ['chats' => $returnChats, 'currentForum' => $currentForum];
             $this->markSuccess('数据获取成功');
         }
 
