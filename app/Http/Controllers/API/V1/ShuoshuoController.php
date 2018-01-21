@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API\V1;
 
 use App\Http\Controllers\API\Controller;
+use App\Repositories\Contracts\ChatLikeRepository;
 use App\Repositories\Contracts\ChatRepository;
 use App\Repositories\Contracts\ForumRepository;
 use Illuminate\Http\Request;
@@ -15,12 +16,17 @@ class ShuoshuoController extends Controller
 {
     protected $chatRepository;
     protected $forumRepository;
+    protected $chatLikeRepository;
 
-    public function __construct(ChatRepository $chatRepository, ForumRepository $forumRepository)
-    {
+    public function __construct(
+        ChatRepository $chatRepository,
+        ForumRepository $forumRepository,
+        ChatLikeRepository $chatLikeRepository
+    ) {
         parent::__construct();
         $this->chatRepository = $chatRepository;
         $this->forumRepository = $forumRepository;
+        $this->chatLikeRepository = $chatLikeRepository;
     }
 
     /**
@@ -35,6 +41,7 @@ class ShuoshuoController extends Controller
         $forumId = intval($request->input('forum_id', 0));
         $lastId = trim($request->input('last_id', 0));
         $pageSize = intval($request->input('page_size', 20));
+        $userId = intval($request->input('user_id', 0));
 
         $where = [];
         $currentForum = new \stdClass();
@@ -53,11 +60,46 @@ class ShuoshuoController extends Controller
             ->withCount(['shuoshuocomments', 'shuoshuoupvotes'])
             ->orderBy('id', 'desc')->paginate($pageSize, ['id', 'content', 'user_id']);
 
-        $this->returnData['data'] = compact('chats', 'currentForum');
         if (count($chats) == 0) {
+            $this->returnData['data'] = compact('chats', 'currentForum');
             $this->markSuccess('没有更多');
             return $this->returnData;
         } else {
+            $chatIds = $chats->pluck('id')->toArray();
+            $myLikes = [];
+            if (!empty($userId)) {
+                $myLikes = $this->chatLikeRepository->whereWithParams([
+                    'user_id' => $userId,
+                    'deleted_at' => ['deleted_at', 'whereNull', null]
+                ])->all(['shuoshuo_id']);
+                if (!is_empty($myLikes)) {
+                    $myLikes = $myLikes->pluck('shuoshuo_id')->toArray();
+                }
+            }
+            $likedChat = array_intersect($myLikes, $chatIds);
+            $returnChats = [];
+            foreach ($chats as $chat) {
+                if (is_empty($chat->user)) {
+                    continue;
+                }
+                $oneItem = new \stdClass();
+                if (in_array($chat->id, $likedChat)) {
+                    $oneItem->like_status = 1;
+                } else {
+                    $oneItem->like_status = 0;
+                }
+
+                $oneItem->id = $chat->id;
+                $oneItem->content = $chat->content;
+                $oneItem->user_id = $chat->user_id;
+                $oneItem->username = $chat->user->name;
+                $oneItem->fullAvatarUrl = $chat->user->fullAvatarUrl;
+                $oneItem->forum_id = $chat->forum_id;
+                $oneItem->UpdateTimeForHuman = $chat->UpdateTimeForHuman;
+
+                $returnChats[] = $oneItem;
+            }
+            $this->returnData['data'] = compact('returnChats', 'currentForum');
             $this->markSuccess('数据获取成功');
         }
 

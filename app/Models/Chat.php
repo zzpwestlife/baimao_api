@@ -38,12 +38,12 @@ class Chat extends BaseModel implements Transformable
 
     public function upvote($user_id)
     {
-        return $this->hasOne('App\Models\ShuoshuoUpvote')->where('user_id', $user_id);
+        return $this->hasOne('App\Models\ChatLike')->where('user_id', $user_id);
     }
 
     public function shuoshuoupvotes()
     {
-        return $this->hasMany('App\Models\ShuoshuoUpvote', 'shuoshuo_id', 'id');
+        return $this->hasMany('App\Models\ChatLike', 'shuoshuo_id', 'id');
 
     }
 
