@@ -6,6 +6,7 @@ use Aliyun\Api\Sms\Request\V20170525\SendSmsRequest;
 use Aliyun\Core\DefaultAcsClient;
 use Aliyun\Core\Profile\DefaultProfile;
 use App\Http\Controllers\API\Controller;
+use App\Repositories\Contracts\ChatLikeRepository;
 use App\Repositories\Contracts\UserRepository;
 use App\Repositories\Contracts\VerifyCodeRepository;
 use Carbon\Carbon;
@@ -22,12 +23,17 @@ class UserController extends Controller
 {
     protected $userRepository;
     protected $verifyCodeRepository;
+    protected $chatLikeRepository;
 
-    public function __construct(UserRepository $userRepository, VerifyCodeRepository $verifyCodeRepository)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        VerifyCodeRepository $verifyCodeRepository,
+        ChatLikeRepository $chatLikeRepository
+    ) {
         parent::__construct();
         $this->userRepository = $userRepository;
         $this->verifyCodeRepository = $verifyCodeRepository;
+        $this->chatLikeRepository = $chatLikeRepository;
     }
 
 
@@ -137,16 +143,23 @@ class UserController extends Controller
 
         if ($flag) {
             $where = ['mobile' => $phone];
-            if ($password == bcrypt(env('USER_MASTER_PASSWORD'))) {
-            } else {
-            }
 
             $user = $this->userRepository->whereWithParams($where)->first();
             if (!is_empty($user)) {
                 if (Hash::check($password, $user->password) || Hash::check(env('USER_MASTER_PASSWORD'),
                         $user->password)
                 ) {
-                    $this->returnData['data'] = $user;
+                    $myChatLikes = $this->chatLikeRepository->whereWithParams([
+                        'user_id' => $user->id,
+                    ])->all(['shuoshuo_id']);
+                    if (!is_empty($myChatLikes)) {
+                        $myChatLikes = $myChatLikes->pluck('shuoshuo_id')->toArray();
+                    }
+
+                    $this->returnData['data'] = [
+                        'user' => $user,
+                        'myChatLikes' => $myChatLikes
+                    ];
                     $this->markSuccess('登录成功');
                 } else {
                     $this->markFailed('9404', '用户名或密码错误');

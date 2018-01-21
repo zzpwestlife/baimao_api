@@ -162,31 +162,50 @@ class ShuoshuoController extends Controller
      */
     public function postLike(Request $request)
     {
-        $chatId = intval($request->input('chat_id', 0));
         $userId = intval($request->input('user_id', 0));
-        $likeStatus = intval($request->input('like_status', 0));
+        $chatLikes = $request->input('chat_likes', '');
+        $chatLikes = json_decode($chatLikes, true);
 
 
         $flag = true;
         if (empty($userId)) {
             $this->markFailed('9401', 'user_id 必填');
             $flag = false;
-        } elseif (empty($chatId)) {
-            $this->markFailed('9402', 'chat_id 必填');
-            $flag = false;
         }
 
         if ($flag) {
-            $where = [
+            $myChatLikes = $this->chatLikeRepository->whereWithParams([
                 'user_id' => $userId,
-                'shuoshuo_id' => $chatId
-            ];
-            $status = $this->chatLikeRepository->whereWithParams($where)->first();
-            if (!is_empty($status)) {
-                $this->chatLikeRepository->delete($status->id);
-            } else {
-                $this->chatLikeRepository->create($where);
+            ])->all(['shuoshuo_id']);
+            $myChatLikes = $myChatLikes->pluck('shuoshuo_id')->toArray();
+
+            // 添加的
+            $added = array_diff($chatLikes, $myChatLikes);
+            if (count($added)) {
+                foreach ($added as $item) {
+                    $where = [
+                        'user_id' => $userId,
+                        'shuoshuo_id' => $item
+                    ];
+                    $this->chatLikeRepository->create($where);
+                }
             }
+
+            // 删除的
+            $deleted = array_diff($myChatLikes, $chatLikes);
+            if (count($deleted)) {
+                foreach ($deleted as $item) {
+                    $where = [
+                        'user_id' => $userId,
+                        'shuoshuo_id' => $item
+                    ];
+                    $status = $this->chatLikeRepository->whereWithParams($where)->first();
+                    if (!is_empty($status)) {
+                        $this->chatLikeRepository->delete($status->id);
+                    }
+                }
+            }
+
             $this->markSuccess('success');
             return $this->returnData;
         }
